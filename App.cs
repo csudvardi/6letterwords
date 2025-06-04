@@ -26,7 +26,7 @@ namespace SixLetterWords
 
         private static string GetFilePath()
         {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FileName);
+            return Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, FileName);
         }
 
         private void FindValidCombinations(List<string> currentCombination, int currentLength)
