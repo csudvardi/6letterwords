@@ -2,72 +2,26 @@
 
 namespace SixLetterWords
 {
-    public class App(ITxtFileProcessor txtFileProcessor)
+    public class App(
+        ITxtFileProcessor txtFileProcessor,
+        IWordCombinationSeeker wordCombinationSeeker,
+        IWordPrinter wordPrinter)
     {
-        private HashSet<string> _allWords = new HashSet<string>();
-        private Dictionary<int, List<string>> _wordsByLength = new();
-        private readonly List<string> _validCombinations = new List<string>();
-
-        private const string FileName = "input.txt";
-        private const int TargetLength = 6;
-
         public void Run()
         {
-            LoadWords();
-            FindValidCombinations([], 0);
-            PrintValidCombinations();
+            var allWords = GetWords();
+            wordCombinationSeeker.FindValidCombinations(new List<string>(), 0, allWords);
+            wordPrinter.PrintWords(wordCombinationSeeker.ValidCombinations);
         }
 
-        private void LoadWords()
+        //private void GroupWordsByLength()
+        //{
+        //    Dictionary<int, List<string>> wordsByLength = txtFileProcessor.GroupWordsByLength(_allWords, TargetLength);
+        //}
+
+        private HashSet<string> GetWords()
         {
-            _allWords = txtFileProcessor.ConvertFileContentToHashSetFromPath(GetFilePath());
-            _wordsByLength = txtFileProcessor.GroupWordsByLength(_allWords);
-        }
-
-        private static string GetFilePath()
-        {
-            return Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, FileName);
-        }
-
-        private void FindValidCombinations(List<string> currentCombination, int currentLength)
-        {
-            if (currentLength == TargetLength)
-            {
-                var combinedWord = string.Join("", currentCombination);
-                if (IsValidCombinedWord(combinedWord, currentCombination.Count))
-                {
-                    _validCombinations.Add($"{string.Join("+", currentCombination)} = {combinedWord}");
-                }
-                return;
-            }
-
-            foreach (var word in _allWords)
-            {
-                if (currentCombination.Contains(word)) continue; // Avoid duplicates
-                if (currentLength + word.Length > TargetLength) continue; // Skip if exceeds length
-                currentCombination.Add(word);
-                FindValidCombinations(currentCombination, currentLength + word.Length);
-                currentCombination.RemoveAt(currentCombination.Count - 1); // Backtrack
-            }
-        }
-
-        private bool IsValidCombinedWord(string combinedWord, int amountOfWordsCombined)
-        {
-            return _allWords.Contains(combinedWord) && amountOfWordsCombined > 1;
-        }
-
-        private void PrintValidCombinations()
-        {
-            if (_validCombinations.Count == 0)
-            {
-                Console.WriteLine("No valid combinations found.");
-                return;
-            }
-
-            foreach (var combination in _validCombinations)
-            {
-                Console.WriteLine(combination);
-            }
+            return txtFileProcessor.ConvertFileContentToHashSet();
         }
     }
 }

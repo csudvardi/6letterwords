@@ -4,5 +4,8 @@ using SixLetterWords;
 using SixLetterWords.Services;
 
 var txtFileProcessor = new TxtFileProcessor();
-var app = new App(txtFileProcessor);
+var wordCombinationSeeker = new WordCombinationSeeker();
+var wordPrinter = new WordPrinter();
+
+var app = new App(txtFileProcessor, wordCombinationSeeker, wordPrinter);
 app.Run();
