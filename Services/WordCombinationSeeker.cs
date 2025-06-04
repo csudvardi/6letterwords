@@ -32,7 +32,7 @@
             }
         }
 
-        private bool IsValidCombinedWord(string combinedWord, int amountOfWordsCombined, HashSet<string> allWords)
+        private static bool IsValidCombinedWord(string combinedWord, int amountOfWordsCombined, HashSet<string> allWords)
         {
             return allWords.Contains(combinedWord) && amountOfWordsCombined > 1;
         }
